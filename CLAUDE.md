@@ -77,6 +77,23 @@ TDD 이탈 신호: 테스트보다 코드를 먼저 작성, 테스트가 즉시 
 
 `bradautomates/claude-video` 스킬을 기반으로 한 동영상 분석 파이프라인.
 
+### 설치
+
+```bash
+# Claude Code
+/plugin marketplace add bradautomates/claude-video
+
+# 수동 설치
+git clone https://github.com/bradautomates/claude-video.git ~/.claude/skills/watch
+```
+
+### 동작 방식
+
+1. `yt-dlp`로 URL 또는 로컬 파일 다운로드
+2. `ffmpeg`으로 자동 스케일 프레임 추출 (JPEG)
+3. 네이티브 캡션 또는 Whisper API로 타임스탬프 전사
+4. 프레임 + 전사본을 Claude에 전달해 질문 응답
+
 ### 지원 소스
 
 - YouTube, TikTok, Vimeo, Instagram URL
@@ -84,38 +101,42 @@ TDD 이탈 신호: 테스트보다 코드를 먼저 작성, 테스트가 즉시 
 
 ### 프레임 추출 전략
 
-| 영상 길이 | 추출 프레임 수 |
-|-----------|---------------|
-| ≤ 30초    | ~30 프레임 (~1-2 fps) |
-| 30초–1분  | ~40 프레임 |
-| 1–3분     | ~60 프레임 |
-| 3–10분    | ~80 프레임 |
-| > 10분    | 100 프레임 (희소 스캔 — 정확도 주의) |
+| 영상 길이 | 추출 프레임 수 | 밀도 |
+|-----------|---------------|------|
+| ≤ 30초    | ~30 프레임 (~1-2 fps) | 조밀 |
+| 30초–1분  | ~40 프레임 | 조밀 |
+| 1–3분     | ~60 프레임 | 보통 |
+| 3–10분    | ~80 프레임 | 희소 |
+| > 10분    | 100 프레임 (희소 스캔 — 정확도 주의) | 희소 |
 
-10분 초과 영상은 `--start`/`--end` 구간 지정을 권장한다.
+10분 초과 영상은 `--start`/`--end` 구간 지정을 권장한다. **최적 정확도: 10분 미만 영상.**
 
 ### 자막·전사 우선순위
 
 1. 플랫폼 네이티브 캡션 (yt-dlp 자동 추출, 무료)
-2. Groq Whisper API (fallback)
+2. Groq Whisper API (fallback, 권장)
 3. OpenAI Whisper API (fallback)
 
-API 키는 `~/.config/watch/.env`에 저장하고 파일 권한을 `600`으로 제한한다.
+API 키는 `~/.config/watch/.env`에 저장하고 파일 권한을 `600`으로 제한한다. 설정은 멱등(idempotent)하여 재실행해도 안전하다.
 
 ### 주요 옵션
 
 | 플래그 | 설명 |
 |--------|------|
 | `--start` / `--end` | 분석할 구간 지정 (예: `2:15`) |
-| `--max-frames` | 프레임 수 상한 지정 |
-| `--resolution` | 프레임 너비 (기본 512px) |
-| `--whisper` | 전사 백엔드 지정 |
+| `--max-frames N` | 프레임 수 상한 지정 (토큰 절약) |
+| `--resolution W` | 프레임 너비 (기본 512px, 텍스트 가독성 필요 시 1024) |
+| `--whisper groq\|openai` | 전사 백엔드 강제 지정 |
 | `--no-whisper` | 전사 비활성화 |
+
+### 보안 모델
+
+처리는 로컬에서 수행되며, Whisper API 사용 시 추출된 오디오만 전송한다 (영상 자체는 전송하지 않는다). API 키는 각 서비스에서만 사용되고 로컬 설정 파일에만 저장된다.
 
 ### 의존성
 
 - `yt-dlp` — 동영상 다운로드
-- `ffmpeg` — 프레임 추출
+- `ffmpeg` / `ffprobe` — 프레임 추출
 - Groq 또는 OpenAI API 키 — 캡션 없는 영상 전사 시 필요
 
 첫 실행 시 macOS는 brew, Linux는 패키지 매니저로 자동 설치 시도한다.
@@ -125,6 +146,7 @@ API 키는 `~/.config/watch/.env`에 저장하고 파일 권한을 `600`으로 �
 - 100프레임 하드 캡, 최소 2 fps
 - Whisper 업로드 한도 25 MB (~50분 오디오)
 - 인증이 필요한 비공개 URL 미지원
+- Claude Code에서 "코드 실행 및 파일 생성" 권한 활성화 필요
 
 ### 사용 예시
 
@@ -132,6 +154,8 @@ API 키는 `~/.config/watch/.env`에 저장하고 파일 권한을 `600`으로 �
 /watch https://youtu.be/URL 30초 지점에 무슨 일이 일어나나요?
 /watch video.mp4 --start 2:15 --end 2:45 이 구간을 요약해줘
 /watch ~/recording.mov UI가 언제 깨지나요?
+/watch slides.mp4 --resolution 1024 이 슬라이드의 텍스트를 읽어줘
+/watch lecture.mp4 --max-frames 50 --no-whisper 핵심만 요약해줘
 ```
 
 ---
