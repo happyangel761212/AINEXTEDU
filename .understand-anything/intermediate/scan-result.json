@@ -1,0 +1,25 @@
+{
+  "projectName": "AINEXTEDU",
+  "projectDescription": "AI 기반 교육 플랫폼. 동영상 콘텐츠 분석, 자막 처리, 프레임 추출을 통해 학습 경험을 제공한다.",
+  "languages": ["markdown", "json"],
+  "frameworks": [],
+  "files": [
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "sizeLines": 116,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "skills-lock.json",
+      "language": "json",
+      "sizeLines": 11,
+      "fileCategory": "config"
+    }
+  ],
+  "importMap": {
+    "CLAUDE.md": [],
+    "skills-lock.json": []
+  },
+  "filteredByIgnore": 0
+}

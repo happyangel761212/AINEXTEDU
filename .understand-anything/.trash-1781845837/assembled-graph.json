@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "AINEXTEDU",
+    "languages": ["markdown", "json"],
+    "frameworks": [],
+    "description": "AI 기반 교육 플랫폼. 동영상 콘텐츠 분석, 자막 처리, 프레임 추출을 통해 학습 경험을 제공한다.",
+    "analyzedAt": "2026-06-19T05:15:00Z",
+    "gitCommitHash": "9c80ec5fc83f419afe331fbdb867325f5137d4eb"
+  },
+  "nodes": [
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Claude Code 프로젝트 지침서. Superpowers 방법론(브레인스토밍→계획→TDD→디버깅→검증)과 /watch 동영상 분석 스킬, Karpathy 코딩 가이드라인을 정의한다.",
+      "tags": ["documentation", "guidelines", "methodology", "tdd", "video-analysis"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:skills-lock.json",
+      "type": "config",
+      "name": "skills-lock.json",
+      "filePath": "skills-lock.json",
+      "summary": "설치된 Claude Code 스킬의 잠금 파일. frontend-design과 Understand-Anything 8개 스킬의 소스 및 해시를 기록한다.",
+      "tags": ["config", "skills", "lock-file", "claude-code"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:skills-lock.json",
+      "target": "document:CLAUDE.md",
+      "type": "configures",
+      "weight": 0.6
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "프로젝트 문서 및 지침서",
+      "nodeIds": ["document:CLAUDE.md"]
+    },
+    {
+      "id": "layer:configuration",
+      "name": "Configuration",
+      "description": "프로젝트 설정 및 잠금 파일",
+      "nodeIds": ["config:skills-lock.json"]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "프로젝트 지침서",
+      "description": "CLAUDE.md는 개발 방법론, 비디오 분석 스킬, 코딩 원칙을 정의하는 핵심 문서입니다.",
+      "nodeIds": ["document:CLAUDE.md"]
+    },
+    {
+      "order": 2,
+      "title": "스킬 잠금 파일",
+      "description": "skills-lock.json은 설치된 Claude Code 스킬들의 버전과 해시를 고정합니다.",
+      "nodeIds": ["config:skills-lock.json"]
+    }
+  ]
+}

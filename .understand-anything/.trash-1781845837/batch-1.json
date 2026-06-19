@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Claude Code 프로젝트 지침서. Superpowers 방법론(브레인스토밍→계획→TDD→디버깅→검증)과 /watch 동영상 분석 스킬, Karpathy 코딩 가이드라인을 정의한다.",
+      "tags": ["documentation", "guidelines", "methodology", "tdd", "video-analysis"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:skills-lock.json",
+      "type": "config",
+      "name": "skills-lock.json",
+      "filePath": "skills-lock.json",
+      "summary": "설치된 Claude Code 스킬의 잠금 파일. frontend-design(anthropics/skills)과 Understand-Anything 8개 스킬의 소스 경로 및 해시를 기록한다.",
+      "tags": ["config", "skills", "lock-file", "claude-code"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:skills-lock.json",
+      "target": "document:CLAUDE.md",
+      "type": "configures",
+      "weight": 0.6
+    }
+  ]
+}
